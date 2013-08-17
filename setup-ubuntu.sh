@@ -36,8 +36,9 @@ cd $tmpdir
 cp /etc/environment .
 cp /etc/apt/sources.list .
 
+sed -i '/_proxy/d' environment
 echo http_proxy=$http_proxy >> environment
-echo https_proxy=$https_proxy > environment
+echo https_proxy=$https_proxy >> environment
 
 # The <<"EOF" starts a here-doc, ended by the EOF on a line by itself.
 cat > apt.conf <<"EOF"
