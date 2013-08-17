@@ -39,7 +39,7 @@ cp /etc/apt/sources.list .
 echo http_proxy=$http_proxy >> environment
 echo https_proxy=$https_proxy > environment
 
-# The <<"EOF" starts a here-doc.
+# The <<"EOF" starts a here-doc, ended by the EOF on a line by itself.
 cat > apt.conf <<"EOF"
 Acquire::http::Proxy "http://printserver.cse.iitb.ac.in:3144/";
 Acquire::http::Proxy::ftp.iitb.ac.in DEFAULT;
@@ -47,7 +47,8 @@ EOF
 
 alias cp='cp -b'
 
-if grep -q 'iitb repo' /etc/apt/sources.list; then
+# Guess where the checksum came from.
+if echo "d088b801d5e15cc7a2d7dfba5fae7431  /etc/apt/sources.list" | md5sum -c --status; then
 	echo "You seem to have a rather threadbare sources.list, I'm replacing it with a fuller one."
 # This here-doc contains my lab computer's sources.list.
 	echo >sources.list <<"EOF"
@@ -110,7 +111,7 @@ fi
 sudo cp -b apt.conf /etc/apt/
 sudo cp -b environment /etc
 
-if sudo apt-get update >~apt.log; then
+if sudo apt-get update >~/apt.log; then
 	echo "APT seems to working fine."
 else
 	echo "Something went wrong. I'll exit without removing any temporary files."
