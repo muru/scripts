@@ -112,6 +112,8 @@ fi
 sudo cp -b apt.conf /etc/apt/
 sudo cp -b environment /etc
 
+echo "Testing the settings by updating apt:"
+echo "sudo apt-get update"
 if sudo apt-get update >~/apt.log; then
 	echo "APT seems to working fine."
 else
