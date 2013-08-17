@@ -26,6 +26,7 @@ tmpdir=~/`echo $USER | md5sum | cut -d" " -f1`
 read -p "Enter your LDAP ID: " LDAPID
 read -sp "Enter your LDAP password: " LDAPPSWD
 
+echo -e \n "Setting up proxy variables..."
 LDAPENCPSWD=$( rawurlencode LDAPPSWD )
 
 export http_proxy="http://$LDAPID:$LDAPENCPSWD@netmon.iitb.ac.in:80"
@@ -57,7 +58,7 @@ if echo "d088b801d5e15cc7a2d7dfba5fae7431  /etc/apt/sources.list" | md5sum -c --
 	echo "You seem to have a rather threadbare sources.list, 
 	I'm replacing it with a fuller one."
 	REPLACE_SOURCES=1
-else if grep -qv iitb /etc/apt/sources.list; then
+elif grep -qv iitb /etc/apt/sources.list; then
 	echo "I'm replacing your sources.list with one using ftp.iitb.ac.in as the mirror."
 	REPLACE_SOURCES=1
 fi
