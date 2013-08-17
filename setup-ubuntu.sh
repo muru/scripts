@@ -51,7 +51,7 @@ alias cp='cp -b'
 if echo "d088b801d5e15cc7a2d7dfba5fae7431  /etc/apt/sources.list" | md5sum -c --status; then
 	echo "You seem to have a rather threadbare sources.list, I'm replacing it with a fuller one."
 # This here-doc contains my lab computer's sources.list.
-	echo >sources.list <<"EOF"
+	cat >sources.list <<"EOF"
 # deb cdrom:[Ubuntu 12.04.2 LTS _Precise Pangolin_ - Release amd64 (20130213)]/ dists/precise/main/binary-i386/
 
 # deb cdrom:[Ubuntu 12.04.2 LTS _Precise Pangolin_ - Release amd64 (20130213)]/ dists/precise/restricted/binary-i386/
@@ -123,19 +123,20 @@ read -p "Install the CS699 requirements? [Y|n]" option
 case $option in
 	[Nn])	echo "Very well."
 		;;
-	*)_		echo "Installing..."
-			sudo apt-get install -y install emacs css-mode python-mode emacs23-el php-elisp gnuplot-mode ispell vim ctags vim-scripts vim-gnome gnuplot dia xfig fig2ps mpg123 python-pygresql python3-postgresql python php5 php5-ldap php5-pgsql subversion cscope cscope-el apache2 bison flex sharutils inkscape eclipse eclipse-cdt avidemux audacity openssh-server vnc4server xvnc4viewer
+	*)		echo "Installing..."
+			sudo apt-get install -y emacs css-mode python-mode emacs23-el php-elisp gnuplot-mode ispell vim ctags vim-scripts vim-gnome gnuplot dia xfig fig2ps mpg123 python-pygresql python3-postgresql python php5 php5-ldap php5-pgsql subversion cscope cscope-el apache2 bison flex sharutils inkscape eclipse eclipse-cdt avidemux audacity openssh-server vnc4server xvnc4viewer
 			;;
 esac
 
 read -p "Install updates? [Y|n]" option
 case $option in
-	[Nn]}	echo "Very well."
+	[Nn])	echo "Very well."
 		;;
-	*)
-			echo "Upgrading..."
+	*)		echo "Upgrading..."
 			sudo apt-get upgrade -y
-			;;
+		;;
 esac
-
+rm ~/apt.log
+cd ~
+rm -rf $tmpdir
 echo "I suppose that's all. Farewell, Great Lord (or Lady, as the case may be."
