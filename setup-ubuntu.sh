@@ -24,7 +24,7 @@ rawurlencode() {
 # I could use /dev/random, but I'm too lazy. :P
 tmpdir=~/`echo $USER | md5sum | cut -d" " -f1`
 read -p "Enter your LDAP ID: " LDAPID
-read -p "Enter your LDAP password: " LDAPPSWD
+read -sp "Enter your LDAP password: " LDAPPSWD
 
 LDAPENCPSWD=$( rawurlencode LDAPPSWD )
 
@@ -128,7 +128,7 @@ case $option in
 		;;
 	*)		echo "Installing..."
 			sudo apt-get install -y emacs css-mode python-mode emacs23-el php-elisp gnuplot-mode ispell vim ctags vim-scripts vim-gnome gnuplot dia xfig fig2ps mpg123 python-pygresql python3-postgresql python php5 php5-ldap php5-pgsql subversion cscope cscope-el apache2 bison flex sharutils inkscape eclipse eclipse-cdt avidemux audacity openssh-server vnc4server xvnc4viewer
-			;;
+		;;
 esac
 
 read -p "Install updates? [Y|n]" option
