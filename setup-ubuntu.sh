@@ -51,10 +51,18 @@ EOF
 
 alias cp='cp -b'
 
+REPLACE_SOURCES=0
 # Guess where the checksum came from.
-if echo "d088b801d5e15cc7a2d7dfba5fae7431  /etc/apt/sources.list" | md5sum -c --status; then
+if echo "d088b801d5e15cc7a2d7dfba5fae7431  /etc/apt/sources.list" | md5sum -c --status ; then
 	echo "You seem to have a rather threadbare sources.list, 
 	I'm replacing it with a fuller one."
+	REPLACE_SOURCES=1
+else if grep -qv iitb /etc/apt/sources.list; then
+	echo "I'm replacing your sources.list with one using ftp.iitb.ac.in as the mirror."
+	REPLACE_SOURCES=1
+fi
+
+if [[ $REPLACE_SOURCES -ne 0 ]]; then
 # This here-doc contains my lab computer's sources.list.
 	cat >sources.list <<"EOF"
 # deb cdrom:[Ubuntu 12.04.2 LTS _Precise Pangolin_ - Release amd64 (20130213)]/ dists/precise/main/binary-i386/
