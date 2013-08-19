@@ -4,7 +4,7 @@
 # and then sets up proxy variables in /etc/environment and /etc/apt/apt.conf.
 # It also sets proxy variables in /etc/bash.bashrc, even though I think this 
 # is not needed. It also exports these variables for the current session.
-# Then it proceeds to test them by running updating APT.
+# Then it proceeds to test them by updating APT.
 #
 # Optionally, it can install software for CS699 (and other courses - planned)
 # and any updates in general.
@@ -178,13 +178,13 @@ case $option in
 				fig2ps mpg123 python-pygresql python3-postgresql python php5 php5-ldap 
 				php5-pgsql subversion cscope cscope-el apache2 bison flex sharutils 
 				inkscape eclipse eclipse-cdt avidemux audacity openssh-server 
-				vnc4server xvnc4viewer"
+				vnc4server xvnc4viewer abs-guide"
 			sudo apt-get install -y emacs css-mode python-mode emacs23-el php-elisp \
 				gnuplot-mode ispell vim ctags vim-scripts vim-gnome gnuplot dia xfig \
 				fig2ps mpg123 python-pygresql python3-postgresql python php5 php5-ldap \
 				php5-pgsql subversion cscope cscope-el apache2 bison flex sharutils \
 				inkscape eclipse eclipse-cdt avidemux audacity openssh-server \
-				vnc4server xvnc4viewer
+				vnc4server xvnc4viewer abs-guide
 ## TODO: Add texlive packages here.
 		;;
 esac
