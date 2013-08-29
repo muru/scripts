@@ -49,7 +49,7 @@ echo -e \n "Setting up proxy variables..."
 # Only the password needs to be encoded now, since the username is almost 
 # certain to be safe. I'll have to examine the rules governing the username
 # and maybe encode the username too.
-LDAPENCPSWD=$( rawurlencode LDAPPSWD )
+LDAPENCPSWD=$( rawurlencode $LDAPPSWD )
 
 export http_proxy="http://$LDAPID:$LDAPENCPSWD@netmon.iitb.ac.in:80"
 export https_proxy=$http_proxy
