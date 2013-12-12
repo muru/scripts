@@ -6,7 +6,7 @@ if [ ! -d $CDROOT ]; then
     mkdir -p $CDROOT
 fi
 
-COUNT=`/usr/bin/ls -1 --reverse $CDROOT/ | head -1`
+COUNT=`/bin/ls -1 --reverse $CDROOT/ | head -1`
 #cd $CDROOT
 
 for ISO in $@; do
@@ -20,7 +20,7 @@ done
 
 if [[ $# -eq 0 ]]; then
     cd $CDROOT
-    for i in `/usr/bin/ls`; do
+    for i in *; do
         sudo umount $i
         rmdir $i
     done

@@ -22,9 +22,9 @@ if [[ $? -eq 0 ]]; then
 	chmod +x configure.sh
 	if ./configure.sh 1>&2 2>spperror.log; then
 		echo Setting environment variables...
-		echo PATH=\$PATH:$SPPDIR | tee ~/.bashrc
-		echo LIBSPP=$SPPDIR/lib | tee ~/.bashrc
-		echo INCLSPP=$SPPDIR/include | tee ~/.bashrc
+		echo PATH=\$PATH:$SPPDIR | tee -a ~/.bashrc
+		echo LIBSPP=$SPPDIR/lib | tee -a ~/.bashrc
+		echo INCLSPP=$SPPDIR/include | tee -a ~/.bashrc
 		. ~/.bashrc
 	else
 		echo "Configuring simplec++ failed. Environment variables won't be modified. Check spperror.log for details."
