@@ -33,4 +33,4 @@ for pt in range(table[0][-1], table[-1][-1] - 1, -1):
 	print('\t\t</td>\n', '\t</tr>')
 
 print('</table>')
-print('<span id="cann-gen-note"> Generated on ', strftime("%A, %d %B %Y at %H:%M.", localtime()), '</span>')
+print('<span id="cann-gen-note"> Generated on ', strftime("%A, %d %B %Y at %H:%M %Z.", localtime()), '</span>')
