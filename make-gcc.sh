@@ -73,47 +73,47 @@ export CPLUS_INCLUDE_PATH=/usr/include/$(gcc -print-multiarch)
 cd $BUILD_DIR/$GMP
 ./configure --prefix=$INSTALL_DIR --enable-cxx && \
 	make -j$NJOBS && \
-	make install && \
-	make check
+	make install || \
+	exit 2
 sudo ldconfig
 
 
 cd $BUILD_DIR/$MPFR
 ./configure --prefix=$INSTALL_DIR --with-gmp=$INSTALL_DIR && \
 	make -j$NJOBS && \
-	make install && \
-	make check
+	make install || \
+	exit 2
 sudo ldconfig
 
 cd $BUILD_DIR/$MPC
 ./configure --prefix=$INSTALL_DIR --with-gmp=$INSTALL_DIR --with-mpfr=$INSTALL_DIR && \
 	make -j$NJOBS && \
-	make install && \
-	make check
+	make install || \
+	exit 2
 sudo ldconfig
 
 
 cd $BUILD_DIR/$PPL
 ./configure --prefix=$INSTALL_DIR --with-gmp-prefix=$INSTALL_DIR && \
 	make -j$NJOBS && \
-	make install && \
-	# make check
+	make install || \
+	# exit 2
 sudo ldconfig
 
 
 cd $BUILD_DIR/$CLOOG
 ./configure --prefix=$INSTALL_DIR --with-ppl=$INSTALL_DIR && \
 	make -j$NJOBS && \
-	make install && \
-	make check
+	make install || \
+	exit 2
 sudo ldconfig
 
 mkdir -p $BUILD_DIR/$GCC
 cd $BUILD_DIR/$GCC
 $WORKING_DIR/$GCC/configure \
-	--enable-languages=c,c++ --prefix=$INSTALL_DIR --program-suffix=${GCC#gcc-} \
+	--enable-languages=c,c++ --prefix=$INSTALL_DIR --program-suffix=${GCC#gcc} \
 	--with-gmp=$INSTALL_DIR --with-mpfr=$INSTALL_DIR --with-mpc=$INSTALL_DIR \
 	--with-ppl=$INSTALL_DIR --with-cloog=$INSTALL_DIR --disable-multilib && \
 	make -j$NJOBS && \
-	make install && \
-	make check
+	make install || \
+	exit 2
