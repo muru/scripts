@@ -8,9 +8,9 @@
 INSTALL_DIR=${INSTALL_DIR:-/opt/cs715}				
 # This is where the source of GCC will be put, 
 # and where I expect to find all the dependencies.
-WORKING_DIR=${WORKING_DIR:-/home/bro3886/devel}		
+WORKING_DIR=${WORKING_DIR:-$HOME/devel}		
 # This is where I compile everything
-BUILD_DIR=${BUILD_DIR:-/home/bro3886/devel/gcc}
+BUILD_DIR=${BUILD_DIR:-$WORKING_DIR/gcc}
 
 GCC=${GCC:-gcc-4.7.2}
 GMP=${GMP:-gmp-4.3.2}
@@ -26,9 +26,15 @@ MPFR_MIRROR=${MPFR_MIRROR:-http://www.mpfr.org/$MPFR}
 PPL_MIRROR=${PPL_MIRROR:-http://bugseng.com/products/ppl/download/ftp/releases/${PPL#ppl-}}
 CLOOG_MIRROR=${CLOOG_MIRROR:-http://gcc.cybermirror.org/infrastructure}
 
-[[ -w `dirname $INSTALL_DIR` ]] && mkdir -p $INSTALL_DIR || sudo -- sh -c "mkdir -p $INSTALL_DIR; chown $USER:$USER $INSTALL_DIR"
-[[ -w `dirname $WORKING_DIR` ]] && mkdir -p $WORKING_DIR || sudo -- sh -c "mkdir -p $WORKING_DIR; chown $USER:$USER $WORKING_DIR"
-[[ -w `dirname $BUILD_DIR` ]] && mkdir -p $BUILD_DIR || sudo -- sh -c "mkdir -p $BUILD_DIR; chown $USER:$USER $BUILD_DIR"
+if [[ ! -w $INSTALL_DIR ]] ; then
+	[[ -w `dirname $INSTALL_DIR` ]] && mkdir -p $INSTALL_DIR || sudo -- sh -c "mkdir -p $INSTALL_DIR; chown $USER:$USER $INSTALL_DIR"
+fi
+if [[ ! -w $WORKING_DIR ]] ; then
+	[[ -w `dirname $WORKING_DIR` ]] && mkdir -p $WORKING_DIR || sudo -- sh -c "mkdir -p $WORKING_DIR; chown $USER:$USER $WORKING_DIR"
+fi
+if [[ ! -w $BUILD_DIR ]] ; then
+	[[ -w `dirname $BUILD_DIR` ]] && mkdir -p $BUILD_DIR || sudo -- sh -c "mkdir -p $BUILD_DIR; chown $USER:$USER $BUILD_DIR"
+fi
 
 cd $WORKING_DIR
 
