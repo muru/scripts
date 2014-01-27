@@ -20,6 +20,8 @@ function INT_cleanup()
 
 trap INT_cleanup INT
 
+GREP_OPTIONS=
+
 status=0
 temp_dir=".tempdir"
 
@@ -46,7 +48,7 @@ fi
 
 cd $working_dir
 
-file_size=$((`curl $download_URL -s -I -L | grep "200 OK" -A 10 | grep "Content-Length: " | grep '[0-9]*' -o`))
+file_size=$(( `curl $download_URL -s -I -L | grep "200 OK" -A 10 | grep "Content-Length: " | grep -E '[0-9]*' -o` ))
 # There's nothing magical about the numbers 16 and 1, they're merely the lengths
 # of "Content-Length: " and the "\r" characters at the end of the line
 # returned by grep. Didn't make much sense making variables for them.
