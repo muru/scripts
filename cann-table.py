@@ -17,7 +17,7 @@ table = [[int(x) if not x[0].isalpha() else x for x in row] for row in csvr]
 count=0
 
 print('<table id="cann-table">')
-print('<thead> <th> Points </th> <th> Clubs (GD) </th> </thead>')
+print('<thead> <th> Pts </th> <th> Clubs (GD) </th> </thead>')
 
 for pt in range(table[0][-1], table[-1][-1] - 1, -1):
 	clubs = [[row[2], row[-2]] for row in table if row[-1] == pt]
