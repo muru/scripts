@@ -9,7 +9,7 @@ find_num_files ()
 	if [[ -e $prefix$1$2 ]]
 	then
 		shopt -s nullglob
-		files=( $prefix$1-*$2 )
+		files=( "$prefix$1-"*"$2" )
 		echo ${#files[@]}
 	fi
 )
@@ -26,7 +26,7 @@ str_join ()
 
 for i
 do
-	# convert to lower case, the replace special chars with _
+	# convert to lower case, then replace special chars with _
 	new_name=$(tr "$windows_chars" _ <<<"${i,,}")
 
 	# if a directory, make it, instead of copying contents
