@@ -35,7 +35,7 @@ do
 	if [[ -d $i ]]
 	then
 		mkdir -p "$prefix$new_name"
-		echo mkdir -p windows/$new_name
+		echo mkdir -p "$prefix$new_name"
 	else
 		# get filename without extension
 		name_wo_ext=${new_name%.*}
@@ -49,6 +49,6 @@ do
 		count=$(find_num_files "$name_wo_ext" "$ext")
 		name_wo_ext=$(str_join - "$name_wo_ext" $count)
 		cp "$i" "$prefix$name_wo_ext$ext"
-		echo cp "$i" windows/"$name_wo_ext$ext"
+		echo cp "$i" "$prefix$name_wo_ext$ext"
 	fi
 done
