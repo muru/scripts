@@ -3,8 +3,6 @@
 windows_chars='<>:"\|?*'
 prefix="windows/"
 
-declare -A file_count
-
 # Find number of files/directories which has this name as a prefix
 find_num_files ()
 (
