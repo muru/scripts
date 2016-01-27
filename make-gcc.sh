@@ -76,28 +76,27 @@ export CPLUS_INCLUDE_PATH=/usr/include/$(gcc -print-multiarch)
 export PATH=$INSTALL_DIR/bin:$PATH
 
 cd $BUILD_DIR/$TEXINFO
-./configure --prefix=$INSTALL_DIR && \
+[[ -f $INSTALL_DIR/bin/makeinfo ]] || ./configure --prefix=$INSTALL_DIR && \
 	make -j$NJOBS && \
 	make install || \
 	exit 2
 
 cd $BUILD_DIR/$GMP
-./configure --prefix=$INSTALL_DIR --enable-cxx && \
+[[ -f $INSTALL_DIR/lib/libgmp.so ]] || ./configure --prefix=$INSTALL_DIR --enable-cxx && \
 	make -j$NJOBS && \
 	make install || \
 	exit 2
 sudo ldconfig
 
-
 cd $BUILD_DIR/$MPFR
-./configure --prefix=$INSTALL_DIR --with-gmp=$INSTALL_DIR && \
+[[ -f $INSTALL_DIR/lib/libmpfr.so ]] || ./configure --prefix=$INSTALL_DIR --with-gmp=$INSTALL_DIR && \
 	make -j$NJOBS && \
 	make install || \
 	exit 2
 sudo ldconfig
 
 cd $BUILD_DIR/$MPC
-./configure --prefix=$INSTALL_DIR --with-gmp=$INSTALL_DIR --with-mpfr=$INSTALL_DIR && \
+[[ -f $INSTALL_DIR/lib/libmpc.so ]] || ./configure --prefix=$INSTALL_DIR --with-gmp=$INSTALL_DIR --with-mpfr=$INSTALL_DIR && \
 	make -j$NJOBS && \
 	make install || \
 	exit 2
@@ -105,7 +104,7 @@ sudo ldconfig
 
 
 cd $BUILD_DIR/$PPL
-./configure --prefix=$INSTALL_DIR --with-gmp-prefix=$INSTALL_DIR && \
+[[ -f $INSTALL_DIR/lib/libppl.so ]] || ./configure --prefix=$INSTALL_DIR --with-gmp-prefix=$INSTALL_DIR && \
 	make -j$NJOBS && \
 	make install \
 	# || exit 2
@@ -113,7 +112,7 @@ sudo ldconfig
 
 
 cd $BUILD_DIR/$CLOOG
-./configure --prefix=$INSTALL_DIR --with-ppl=$INSTALL_DIR && \
+[[ -f $INSTALL_DIR/lib/libcloog.so ]] || ./configure --prefix=$INSTALL_DIR --with-ppl=$INSTALL_DIR && \
 	make -j$NJOBS && \
 	make install || \
 	exit 2
@@ -128,3 +127,17 @@ $WORKING_DIR/$GCC/configure \
 	make -j$NJOBS && \
 	make install || \
 	exit 2
+
+echo "I'll create a shell script with the requisite environment variables." 
+echo "Source it as you need, or add a source command to your .bashrc."
+
+echo "export PATH=$INSTALL_DIR/bin:\$PATH" > $INSTALL_DIR/paths.sh
+echo "export LD_LIBRARY_PATH=$INSTALL_DIR/lib" >> $INSTALL_DIR/paths.sh
+cat >$INSTALL_DIR/paths.sh <<"EOF"
+export LIBRARY_PATH=/usr/lib/$(gcc -print-multiarch)
+export C_INCLUDE_PATH=/usr/include/$(gcc -print-multiarch)
+export CPLUS_INCLUDE_PATH=/usr/include/$(gcc -print-multiarch)
+EOF
+
+echo "Script created: $INSTALL_DIR/paths.sh"
+cat $INSTALL_DIR/paths.sh
