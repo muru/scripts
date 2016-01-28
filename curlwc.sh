@@ -25,7 +25,7 @@ GREP_OPTIONS=
 status=0
 temp_dir=".tempdir"
 
-if [ -z $1 ]; then
+if [[ -z $1 ]]; then
     echo "Usage: "
     echo "<script name> URL [Target Directory] [piece size in MB]"
     echo "Please specify a URL to download, if you still wanna continue."
@@ -34,74 +34,70 @@ else
     download_URL="$1"
 fi
 
-if [ -z $2 ]; then
-    working_dir="$PWD"
-else
-    working_dir="$2"
-fi
+working_dir="${2:-$PWD}"
 
-if [ -z $3 ]; then
-    piece_size=$((149*1024*1024))
-else
-    piece_size=$(($3*1024*1024))
-fi
+piece_size=$((${3:-149}*1024*1024))
 
-cd $working_dir
+cd "$working_dir"
 
-file_size=$(( `curl $download_URL -s -I -L | grep "Content-Length: " | grep -E '[0-9]*' -o` ))
-# There's nothing magical about the numbers 16 and 1, they're merely the lengths
-# of "Content-Length: " and the "\r" characters at the end of the line
-# returned by grep. Didn't make much sense making variables for them.
+file_size=$(( $(curl "$download_URL" -s -I -L | awk '/Content-Length:/ {print $2}') ))
 
 num_parts=$((file_size / piece_size))
 part_size[$num_parts]=$((file_size % piece_size))
 
-if [[ ! -d $temp_dir ]]; then
-    mkdir $temp_dir
-fi
+mkdir -p "$temp_dir"
+cd "$temp_dir"
 
-cd $temp_dir
-
-for i in `seq 0 $((num_parts - 1))`; do
-        part_size[$i]=$((piece_size))
+for ((i = 0; i < (num_parts - 1); i++)); do
+        part_size[$i]="$piece_size"
 done
 
-if ls | grep ".0" -q; then 
-    file_name="$(ls *.0)"
-    file_name=${file_name%".0"}
-else
-    curl --remote-name --silent $download_URL --range 0-0 --location
-    file_name="$(ls)"
-    part_name="`echo $file_name.0`"
-    mv $file_name -T "$part_name"
-fi
+shopt -s nullglob
+shopt -s dotglob
 
-while [ $status -eq 0 ]; do
-    loop_iterations=`expr $loop_iterations + 1`
+files=( *.0 )
+case ${#files[@]} in
+	0)
+		filename=${download_URL##*/}
+		filename=${download_URL%%\?*}
+		mv "$filename" -T "${files[0]}.0"
+		;;
+	1)
+		file_name=${files[0]%".0"}
+		;;
+	*)
+		echo "multiple initial parts found. Quitting..."
+		exit 1
+		;;
+esac
+
+while ((status == 0)); do
+	loop_iterations=$((loop_iterations + 1))
             
-    for i in `seq 0 $num_parts`; do
-        part_name="`echo $file_name.$i`"
+	for ((i = 0; i < num_parts; i++))
+	do
+        part_name="$file_name.$i"
         
-        if [ -e "$part_name" ]; then
-            current_size=$(stat $part_name -c%s)
-            if [ $current_size -eq ${part_size[i]} ]; then                
+        if [[ -e "$part_name" ]]; then
+            current_size=$(stat "$part_name" -c%s)
+            if (( current_size == part_size[i] )); then                
                 echo "Part $i done!"
                 continue
-            elif [ $current_size -ge ${part_size[i]} ]; then
+            elif (( current_size > part_size[i] )); then
                 echo "Something's wrong with part $i's size. Exiting..."
                 kill $(jobs -p)  
                 exit              
             else
                 echo "Resuming part $i!"
             fi
-            part_begin=$(( i*piece_size + current_size))            
+            part_begin=$((i * piece_size + current_size))            
         else
-            part_begin=$(( i*piece_size ))
+            part_begin=$((i * piece_size))
         fi               
         
         part_end=$((i*piece_size + part_size[i] - 1))
         echo "Downloading part $i: From $part_begin till $part_end."
-        curl $download_URL --location --silent --range $part_begin-$part_end >> "$part_name" &  
+        curl "$download_URL" --location --silent --range $part_begin-$part_end >> "$part_name" &  
     done
 
     wait
@@ -109,16 +105,17 @@ while [ $status -eq 0 ]; do
 
     status=1    
     
-    for i in `seq 0 $num_parts`; do
-        part_name="`echo $file_name.$i`"
-        current_size=$(stat $part_name -c%s)
-        if [ $((current_size - part_size[i])) -lt 0 ]; then
+	for ((i = 0; i < num_parts; i++))
+	do
+        part_name="$file_name.$i"
+        current_size=$(stat "$part_name" -c%s)
+		if (( (current_size - part_size[i]) > 0 )); then
             echo "In part $i, $(( part_size[i] - current_size )) bytes remain to be downloaded."
             status=$((status && 0))
         fi
     done    
     
-    if [ $loop_iterations -eq 10 ]; then
+    if (( loop_iterations == 10 )); then
         echo "Quiting the task. Something might be wrong, as this the tenth time"
         echo "I've tried downloading. Do check what's going wrong. Sorry! :("
         exit
@@ -128,18 +125,18 @@ done
 
 echo "All files done."
 
-cd $working_dir
+cd "$working_dir"
 
-if ls | grep -q "$file_name"; then
-    current_size=$(stat $file_name -c%s) 
-    if [ $((current_size - file_size)) -eq 0 ]; then
+if [[ -f $file_name ]]; then
+    current_size=$(stat "$file_name" -c%s) 
+	if (( (current_size - file_size) > 0 )); then
         echo "A file of matching size and name already exists at the site."
     fi
 else
-    cat $temp_dir/$file_name.* > $file_name
-    downloaded_size=$(stat $file_name -c%s)
+    printf "$temp_dir/$file_name.%d\0" ${!part_size[@]} | xargs -0 cat > "$file_name"
+    downloaded_size=$(stat "$file_name" -c%s)
 
-    if [ $downloaded_size -eq $file_size ]; then
+	if (( downloaded_size == file_size )); then
         rm $temp_dir -r -f 
         echo "Done!"
     else    
