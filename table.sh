@@ -11,15 +11,11 @@
 # by some tidying-up.
 
 function table_bbc () {
-	echo -n Pos.,Team,P,W,D,L,GD,Pts.
-	curl -s 'http://www.bbc.com/sport/football/tables?filter=competition-118996114' | 
-		grep -E '<td class=.(position|team|played|won|drawn|lost|goal|points)' |
-		sed 's/<[^>]*>//g;s/No movement//' | 
-		tr '\n' ' ' | 
-		sed 's/ \+/ /g;s/\([a-z]\) \([A-Z]\)/\1:\2/g;s/[0-9]\+ [A-Z]/\n&/g;' 
-	echo
+	curl -s http://www.bbc.com/sport/football/tables |
+		sed -rn '/team-name/s/.*([A-Z][a-z ]*)<.*/\1/p;/points|goal-difference/s/.*>(-?[0-9]*)<.*/\1/p' | 
+		awk 'NR % 3 {printf "%s, ", $0; next} 1'
 }
-# table_bbc | sed 's/ \+$//;s/ /,/g;s/:/ /'
+table_bbc | ./cann-table.py
 
 function table_pl () {
 	curl -s "http://www.premierleague.com/en-gb/matchday/league-table.html" | 
@@ -32,4 +28,4 @@ function table_pl () {
 	echo
 }
 
-table_pl | cann-table.py
+# table_pl | cann-table.py

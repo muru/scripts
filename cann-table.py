@@ -20,7 +20,7 @@ print('<table id="cann-table">')
 print('<thead> <th> Pts </th> <th> Clubs (GD) </th> </thead>')
 
 for pt in range(table[0][-1], table[-1][-1] - 1, -1):
-	clubs = [[row[2], row[-2]] for row in table if row[-1] == pt]
+	clubs = [[row[0], row[1]] for row in table if row[-1] == pt]
 	label = '1' if count < 3 else '2'
 	count = (count + 1) % 6
 
