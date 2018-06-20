@@ -1,0 +1,41 @@
+#! /bin/bash
+log () {
+	printf "%s\n" "$*" >&2
+}
+
+PATH="$HOME/bin:$PATH"
+ethd=( )
+
+begin=1
+end=40
+case $# in
+1)
+	end=$1
+	;;
+2)
+	begin=$1
+	end=$2
+	;;
+esac
+
+for ((i = begin; i <= end; i++))
+do
+	ethd+=( "https://1337x.to/EZTVag-torrents/$i/" )
+done
+
+echo "${ethd[@]}"
+
+curl -Ls "${ethd[@]}" |
+	pup '.table-list-wrap tr td:nth-child(1) a:nth-child(2) json{}' |
+	jq -r '.[] | .href, .text' |
+	paste - - |
+	grep -Ef ~/.shows |
+	grep 720p | grep -e AVS -e SVA -e KILLERS -e BATV |
+	while IFS=$'\t' read -r url name
+	do
+		log "$name"
+		curl -Ls "https://1337x.to$url" |
+			pup ':parent-of(:parent-of(.flaticon-magnet)) attr{href}'
+	done |
+	sed 'n;d' |
+	post-magnets

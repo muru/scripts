@@ -1,0 +1,17 @@
+#! /bin/sh
+
+wallpapers=${wallpapers:-~/Pictures/Fav}
+period=${period:-10m}
+
+gsettings set org.gnome.desktop.background picture-uri "file://$HOME/.current-wallpaper"
+gsettings set org.gnome.desktop.screensaver picture-uri "file://$HOME/.current-wallpaper"
+while true
+do
+	find "$wallpapers" -type f -print0 |
+		shuf -z |
+		while IFS= read -d '' -r pic
+		do
+			sleep "$period"
+			ln -sf "$pic" ~/.current-wallpaper
+		done
+done

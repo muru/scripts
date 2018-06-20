@@ -1,5 +1,6 @@
 #! /bin/bash
 set -xue
+PATH="$HOME/bin:$PATH"
 
 cd ~/devel/web
 git pull

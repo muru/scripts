@@ -1,0 +1,50 @@
+#! /bin/bash
+log () {
+	printf "%s\n" "$@" >&2
+}
+
+vpn_list=/etc/openvpn/vpngate.vpns
+
+update_vpn_list () {
+	if [[ -s "$vpn_list" ]] && [[ -s "$vpn_list-stamp" ]]
+	then
+		last_update=$(( $(date +%s) - $(< "$vpn_list-stamp") ))
+		log "Last update: $last_update s ago"
+		(( (last_update < 86400) )) && return
+	fi
+	log "Updating VPN list."
+	date +%s > "$vpn_list-stamp"
+	getvpns > "$vpn_list"
+}
+
+declare -a country speed url
+
+read_vpn_list () {
+	i=0
+	while IFS=$'\t' read 'country[i]' 'speed[i]' 'url[i]'
+	do
+		(( i++ ))
+	done < "$vpn_list"
+	unset  'country[i]' 'speed[i]' 'url[i]'
+}
+
+vpnget () {
+	curl -sL "$1" |
+		sed '/;http-proxy-retry/s/^;http/socks/;/;http-proxy/s/.*/socks-proxy localhost 9050/; s/\r//' > /etc/openvpn/vpngate.conf
+}
+
+get_new_vpn() {
+	update_vpn_list
+	read_vpn_list
+
+	log "Attempting 1 of $i: ${country[0]}, speed: ${speed[0]}."
+
+	vpnget "${url[0]}"
+	sed -i 1d "$vpn_list"
+}
+
+get_new_vpn
+while grep -qi html /etc/openvpn/vpngate.conf
+do
+	get_new_vpn
+done

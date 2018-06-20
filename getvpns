@@ -1,0 +1,17 @@
+#! /bin/bash
+
+url=https://www.vpngate.net
+tid=vg_hosts_table_id
+
+IFS=$'\t'
+curl -sL "$url" |
+	pup --plain "table#$tid tr:parent-of(td:contains(\"TCP: 443\")) json{}" |
+	jq --arg url "$url/en/" -r '.[] | [.children[0].text, .children[3].children[0].children[0].text, $url + .children[6].children[0].href] | @tsv' |
+	sort -t "$IFS" -k2hr |
+	while read -ra fields
+	do
+		fields[2]="$url$(curl -sL "${fields[2]}" |
+			pup --plain 'a[href$="tcp_443.ovpn"] attr{href}' | head -n1)"
+		printf "%s\n" "${fields[*]}"
+	done
+

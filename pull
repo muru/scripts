@@ -1,0 +1,8 @@
+#! /bin/bash
+. ~/.config/magnets.env
+cd "$dir"
+curl -sL "$host"/stuff/log.txt | 
+	grep -P 'S\d+E\d+' |
+	grep -v -e Silicon -e Modern -e '\.nfo' |
+	LC_COLLATE=en_GB.UTF-8 sort |
+	wget --continue --input-file=-
