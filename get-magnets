@@ -35,7 +35,6 @@ curl -Ls "${ethd[@]}" |
 	do
 		log "$name"
 		curl -Ls "https://1337x.to$url" |
-			pup ':parent-of(:parent-of(.flaticon-magnet)) attr{href}'
+			pup 'a:contains("Magnet Download") attr{href}'
 	done |
-	sed 'n;d' |
 	post-magnets
