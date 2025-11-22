@@ -35,7 +35,7 @@ for point in range(table[0][-1], table[-1][-1] - 1, -1):
         note = ""
         if games_in_hand := (matchweek - matches_played):
             footnotes = True
-            note = '*'*games_in_hand
+            note = "*" * games_in_hand
 
         print(f'\t\t\t<span class="club-name">{club}{note} ({goal_difference})</span>')
     print("\t\t</td>\n", "\t</tr>")

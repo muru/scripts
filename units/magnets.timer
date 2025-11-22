@@ -1,0 +1,11 @@
+[Unit]
+Description=Get magnets daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+RandomizedDelaySec=240
+
+
+[Install]
+WantedBy=timers.target

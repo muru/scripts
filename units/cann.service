@@ -1,0 +1,6 @@
+[Unit]
+Description=Update Cann Table
+
+[Service]
+Environment=GOPATH=/home/muru/dev
+ExecStart=/home/muru/bin/update-cann-table.sh

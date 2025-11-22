@@ -1,0 +1,12 @@
+[Unit]
+Description=Update Cann Table Weekly
+
+[Timer]
+#OnCalendar=Mon *-*-* 10:00:00
+OnCalendar=Daily
+Persistent=true
+RandomizedDelaySec=240
+
+
+[Install]
+WantedBy=timers.target

@@ -11,9 +11,9 @@
 # by some tidying-up.
 
 function table_bbc2 () {
-	child_selecter='.gel-long-primer tr td:nth-child'
+	child_selecter='section[aria-labelledby="tab-PremierLeague"] tr td:nth-child'
 	curl -Ls http://www.bbc.com/sport/football/tables |
-		pup "$child_selecter(3), $child_selecter(4), $child_selecter(10), .$child_selecter(11) text{}" |
+		pup "$child_selecter(1) a, $child_selecter(2), $child_selecter(8), $child_selecter(9) text{}" |
 		awk '{b=(NR-1)%20;a[b] = a[b] "," $0} END{for (i = 0; i < 20 ;i++)print a[i]}' |
 		sed 's/^,//'
 }

@@ -1,0 +1,6 @@
+[Unit]
+Description=Get magnets
+
+[Service]
+Environment=GOPATH=/home/muru/dev
+ExecStart=/home/muru/bin/get-magnets
